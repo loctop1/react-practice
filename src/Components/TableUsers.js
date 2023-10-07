@@ -14,9 +14,9 @@ const TableUsers = (props) => {
     /**Định nghĩa hàm "getUsers" là một hàm bất đồng bộ sử dụng async/await. */ 
         let res = await fetchAllUser();
         /**Gọi hàm "fetchAllUser" (truyền từ component khác) để tải danh sách người dùng từ máy chủ. */
-        if (res && res.data && res.data.data) {
-            setListUsers(res.data.data)
-            /**res.data.data chứa danh sách người dùng từ phản hồi. */
+        if (res && res.data) {
+            setListUsers(res.data)
+            /**res.data chứa danh sách người dùng từ phản hồi. */
         }
         /**Kiểm tra xem phản hồi có dữ liệu và gán dữ liệu vào state "listUsers" nếu có. */
         console.log('>>> check res: ', res);
