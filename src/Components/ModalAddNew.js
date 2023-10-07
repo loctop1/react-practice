@@ -2,9 +2,11 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
+import { postCreateUser } from '../service/UserService';
+import { toast } from 'react-toastify';
 
 const ModalAddNew = (props) => {
-    const { show, handleClose } = props;
+    const { show, handleClose, handleUpdateTable } = props;
     /**Giải nén props để lấy giá trị show và handleClose */
     const [name, setName] = useState("");
     /**Khai báo biến name và hàm setName để quản lý state của name */
@@ -12,8 +14,26 @@ const ModalAddNew = (props) => {
     /**Khai báo biến job và hàm setJob để quản lý state của job */
 
     //tạo chức năng khi ấn lưu thông tin
-    const handleSaveUser = () => {
-        console.log('>>> check state: ', 'name = ', name, 'job', job);
+    const handleSaveUser = async () => {
+        let res = await postCreateUser(name, job);
+        /**Gọi hàm postCreateUser để tạo người dùng mới với name và job */
+        if (res && res.id) {
+            /**Nếu tạo người dùng thành công (có trả về id) */
+            handleClose(); // Đóng modal
+            setName(''); // Đặt lại giá trị của biến state name
+            setJob(''); // Đặt lại giá trị của biến state job
+            toast.success('Thêm người dùng thành công!');
+            handleUpdateTable({ first_name: name, id: res.id })
+            /**Gọi hàm handleUpdateTable để cập nhật bảng với thông tin người dùng mới
+             * { first_name: name, id: res.id }: Đây là đối tượng (object) chứa thông tin người dùng 
+             * mới cần cập nhật vào bảng hoặc danh sách.
+             * first_name: Tên người dùng mới, giá trị được lấy từ biến name.
+             * id: ID của người dùng mới, giá trị được lấy từ res.id (kết quả từ việc tạo người dùng 
+             * mới).*/
+        } else {
+            toast.error('Lỗi! Không thêm được người dùng')
+        }
+        console.log('>>> check res: ', res);
     }
     return (
         <>
