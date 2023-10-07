@@ -36,3 +36,46 @@ code {
     transform: rotate(360deg);
   }
 }
+/* Trong file CSS của bạn */
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #000000; /* Đặt viền cho bảng */
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+.custom-table th {
+  background-color: #3498db; /* Màu nền tiêu đề (ví dụ: màu xanh da trời) */
+  color: #fff; /* Màu chữ trắng */
+  font-weight: bold;
+}
+
+.custom-table tbody tr:nth-child(odd) {
+  background-color: #f2f2f2; /* Màu nền cho các hàng lẻ (ví dụ: màu xám nhạt) */
+}
+
+.custom-table tbody tr:hover {
+  background-color: #e0e0e0; /* Màu nền khi di chuột qua hàng (ví dụ: màu xám nhạt khác) */
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #3498db; /* Đặt viền cho ảnh đại diện (cùng màu với tiêu đề) */
+}
+
+.app-container{
+  .add-new{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

@@ -43,7 +43,7 @@ const TableUsers = (props) => {
     }
     return (
         <>
-            <Table striped bordered hover>
+            <Table striped bordered hover responsive className='custom-table'>
                 <thead>
                     <tr>
                         <th>ID</th>
