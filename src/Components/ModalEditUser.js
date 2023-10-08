@@ -1,13 +1,13 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { postCreateUser } from '../service/UserService';
 import { toast } from 'react-toastify';
 
-const ModalAddNew = (props) => {
-    const { show, handleClose, handleUpdateTable } = props;
-    /**Giải nén props để lấy giá trị show và handleClose */
+const ModalEditUser = (props) => {
+    const { show, handleClose, dataUserEdit } = props;
+    /**Giải nén props để lấy giá trị show và handleClose và dataUserEdit */
     const [email, setEmail] = useState("");
     /**Khai báo biến name và hàm setName để quản lý state của name */
     const [firtName, setFirstName] = useState("");
@@ -15,34 +15,28 @@ const ModalAddNew = (props) => {
     const [lastName, setLastName] = useState("");
     /**Khai báo biến job và hàm setJob để quản lý state của job */
 
-    //tạo chức năng khi ấn lưu thông tin
-    const handleSaveUser = async () => {
-        let res = await postCreateUser(email, firtName, lastName);
-        /**Gọi hàm postCreateUser để tạo người dùng mới với name và job */
-        if (res && res.id) {
-            /**Nếu tạo người dùng thành công (có trả về id) */
-            handleClose(); // Đóng modal
-            setEmail();
-            setFirstName();
-            setLastName();
-            toast.success('Thêm người dùng thành công!');
-            handleUpdateTable({ email: email, first_name: firtName, last_name: lastName, id: res.id })
-            /**Gọi hàm handleUpdateTable để cập nhật bảng với thông tin người dùng mới
-             * { first_name: name, id: res.id }: Đây là đối tượng (object) chứa thông tin người dùng 
-             * mới cần cập nhật vào bảng hoặc danh sách.
-             * first_name: Tên người dùng mới, giá trị được lấy từ biến name.
-             * id: ID của người dùng mới, giá trị được lấy từ res.id (kết quả từ việc tạo người dùng 
-             * mới).*/
-        } else {
-            toast.error('Lỗi! Không thêm được người dùng')
-        }
-        console.log('>>> check res: ', res);
+    //chức năng chỉnh sửa người dùng
+    const handleEditUser = () => {
+
     }
+
+    useEffect(() => {
+        if (show) {
+            /**Hiệu ứng kiểm tra giá trị của biến show. Nếu show là true, hiệu ứng tiếp tục thực hiện lệnh bên trong. */
+            setEmail(dataUserEdit.email);
+            /**Nếu show là true, thì lệnh này được thực hiện. Nó đặt giá trị của biến name bằng giá trị của 
+             * dataUserEdit.first_name. Điều này có nghĩa là nếu show là true và dataUserEdit thay đổi, name sẽ được cập nhật 
+             * với first_name của dataUserEdit. */
+            setFirstName(dataUserEdit.first_name);
+            setLastName(dataUserEdit.last_name);
+        }
+    }, [dataUserEdit]);
+    console.log('>>> check prop Edit: ', dataUserEdit);
     return (
         <>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Thêm người dùng</Modal.Title>
+                    <Modal.Title>Chỉnh sửa người dùng</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className='body-add-new'>
@@ -85,12 +79,12 @@ const ModalAddNew = (props) => {
                     <Button variant="danger" onClick={handleClose}>
                         Đóng
                     </Button>
-                    <Button variant="success" onClick={() => handleSaveUser()}>
-                        Gửi
+                    <Button variant="success" onClick={() => handleEditUser()}>
+                        Cập nhật
                     </Button>
                 </Modal.Footer>
             </Modal>
         </>
     )
 }
-export default ModalAddNew;
+export default ModalEditUser;

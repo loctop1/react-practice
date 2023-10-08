@@ -7,7 +7,10 @@ import { faCircleChevronRight, faCircleChevronLeft } from '@fortawesome/free-sol
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 //Phân trang
 import ReactPaginate from 'react-paginate';
+//Modal thêm người dùng
 import ModalAddNew from './ModalAddNew';
+//Modal chỉnh sửa người dùng
+import ModalEditUser from './ModalEditUser';
 
 const TableUsers = (props) => {
     const [listUsers, setListUsers] = useState([]);
@@ -19,10 +22,21 @@ const TableUsers = (props) => {
     const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
     /**Khai báo biến state isShowModalAddNew và hàm setIsShowModalAddNew để quản lý trạng thái hiển thị 
      * modal, ban đầu được đặt là false để ẩn modal. */
+    const [isShowModalEdit, setIsShowModalEdit] = useState(false);
+    /**Khai báo biến state isShowModalEdit và hàm setIsShowModalEdit để quản lý trạng thái hiển thị 
+    * modal, ban đầu được đặt là false để ẩn modal. */
+    const [dataUserEdit, setDataUserEdit] = useState({});
+    /**useState({}) khởi tạo biến trạng thái dataUserEdit với giá trị ban đầu là một đối tượng 
+     * rỗng {}. dataUserEdit sẽ chứa dữ liệu trạng thái và có thể được cập nhật sau này bằng cách sử 
+     * dụng setDataUserEdit. */
+
     //Chức năng đóng Modal
     const handleClose = () => {
         setIsShowModalAddNew(false);
         /**Khi được gọi, hàm này sẽ đặt giá trị của biến isShowModalAddNew thành false, dẫn đến việc 
+         * ẩn modal. */
+        setIsShowModalEdit(false);
+        /**Khi được gọi, hàm này sẽ đặt giá trị của biến setIsShowModalEdit thành false, dẫn đến việc 
          * ẩn modal. */
     }
 
@@ -66,6 +80,19 @@ const TableUsers = (props) => {
          * +event.selected + 1 sẽ thêm 1 đơn vị vào giá trị event.selected, có thể là để tăng trang 
          * lên 1 nếu event.selected biểu thị trang trước đó.*/
     }
+
+    //Chức năng chỉnh sửa người dùng
+    const handleEditUser = (user) => {
+        console.log(user);
+        setDataUserEdit(user);
+        /**Dòng này đặt giá trị của biến state dataUserEdit bằng thông tin người dùng được truyền vào hàm handleEditUser. Điều 
+         * này có nghĩa là thông tin người dùng sẽ được lưu trữ trong state để sau đó có thể truy cập và sử dụng trong modal 
+         * chỉnh sửa. */
+        setIsShowModalEdit(true);
+        /** Dòng này đặt giá trị của biến state isShowModalEdit thành true. Điều này dẫn đến hiển thị modal chỉnh sửa người 
+         * dùng trên giao diện người dùng, vì modal này dựa vào giá trị của isShowModalEdit để quyết định xem có hiển thị hay 
+         * không. */
+    }
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
@@ -80,10 +107,10 @@ const TableUsers = (props) => {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Ảnh đại diện</th>
                         <th>Email</th>
                         <th>Họ</th>
                         <th>Tên</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,18 +119,22 @@ const TableUsers = (props) => {
                             return (
                                 <tr key={`users-${index}`}>
                                     <td>{item.id}</td>
-                                    <td>
-                                        <img src={item.avatar} className='rounded-circle' />
-                                    </td>
                                     <td>{item.email}</td>
                                     <td>{item.first_name}</td>
                                     <td>{item.last_name}</td>
+                                    <td>
+                                        <button onClick={() => handleEditUser(item)} className='btn btn-success mx-3 fw-bold'>
+                                            Sửa
+                                        </button>
+                                        <button className='btn btn-danger fw-bold'>Xóa</button>
+                                    </td>
                                 </tr>
                             )
                         })
                     }
                 </tbody>
             </Table>
+            {/* Modal thêm User */}
             <ModalAddNew
                 show={isShowModalAddNew}
                 /**truyền giá trị của biến isShowModalAddNew vào prop show của <ModalAddNew>. Điều này sẽ 
@@ -114,6 +145,20 @@ const TableUsers = (props) => {
                  * và muốn đóng modal, hàm này sẽ được gọi để thay đổi giá trị của isShowModalAddNew thành 
                  * false, dẫn đến việc ẩn modal. */
                 handleUpdateTable={handleUpdateTable}
+            />
+            {/* Modal chỉnh sửa User */}
+            <ModalEditUser
+                show={isShowModalEdit}
+                /**truyền giá trị của biến isShowModalEdit vào prop show của <ModalEditUser>. Điều này sẽ 
+                 * quyết định xem modal có được hiển thị (nếu isShowModalEdit là true) hoặc ẩn đi 
+                 * (nếu isShowModalEdit là false). */
+                handleClose={handleClose}
+                /**truyền hàm handleClose vào prop handleClose của <ModalEditUser>. Khi người dùng tương tác 
+                 * và muốn đóng modal, hàm này sẽ được gọi để thay đổi giá trị của isShowModalEdit thành 
+                 * false, dẫn đến việc ẩn modal. */
+                dataUserEdit={dataUserEdit}
+            /**dataUserEdit chứa dữ liệu về người dùng mà bạn muốn chỉnh sửa trong modal. Modal có thể sử dụng dataUserEdit 
+             * để hiển thị thông tin chi tiết về người dùng hoặc để cho phép người dùng chỉnh sửa thông tin. */
             />
             <ReactPaginate
                 nextLabel={
