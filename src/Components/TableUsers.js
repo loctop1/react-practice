@@ -11,6 +11,8 @@ import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew';
 //Modal chỉnh sửa người dùng
 import ModalEditUser from './ModalEditUser';
+//Lodash
+import { cloneDeep } from 'lodash';
 
 const TableUsers = (props) => {
     const [listUsers, setListUsers] = useState([]);
@@ -50,6 +52,28 @@ const TableUsers = (props) => {
          * user: Là đối tượng người dùng mới cần thêm vào danh sách.
          * ...listUsers: Là toán tử spread (...) được sử dụng để sao chép tất cả các phần tử từ mảng 
          * listUsers hiện tại. */
+    }
+
+    //Chức năng chỉnh sửa người dùng
+    const handleEditUserFromModal = (user) => {
+        const _ = require('lodash');
+        /**Đoạn mã này import thư viện Lodash và gán nó cho biến _. Lodash là một thư viện JavaScript phổ biến dùng để thao tác 
+         * và xử lý dữ liệu. */
+        let cloneListUsers = _.cloneDeep(listUsers);
+        /**Dòng này tạo một bản sao sâu của danh sách listUsers sử dụng hàm _.cloneDeep từ thư viện Lodash. Bản sao sâu đảm bảo 
+         * rằng các thay đổi không ảnh hưởng đến danh sách gốc. */
+        let index = listUsers.findIndex(item => item.id === user.id);
+        /**Dòng này tìm vị trí của user trong danh sách listUsers bằng cách sử dụng findIndex. Hàm này tìm kiếm phần tử đầu 
+         * tiên trong danh sách mà có id trùng với user.id và trả về chỉ số của phần tử đó trong danh sách. Kết quả được lưu 
+         * vào biến index. */
+        cloneListUsers[index].first_name = user.first_name;
+        /**Dòng này chỉnh sửa thông tin first_name của người dùng tại vị trí index trong bản sao cloneListUsers thành 
+         * user.first_name, thực hiện việc cập nhật thông tin. */
+        cloneListUsers[index].last_name = user.last_name;
+        cloneListUsers[index].email = user.email;
+        setListUsers(cloneListUsers);
+        /**Dòng này sử dụng setListUsers (giả định rằng đây là hàm dùng để cập nhật danh sách người dùng) để cập nhật danh sách 
+         * listUsers thành bản sao đã được chỉnh sửa cloneListUsers. */
     }
 
     useEffect(() => {
@@ -157,8 +181,9 @@ const TableUsers = (props) => {
                  * và muốn đóng modal, hàm này sẽ được gọi để thay đổi giá trị của isShowModalEdit thành 
                  * false, dẫn đến việc ẩn modal. */
                 dataUserEdit={dataUserEdit}
-            /**dataUserEdit chứa dữ liệu về người dùng mà bạn muốn chỉnh sửa trong modal. Modal có thể sử dụng dataUserEdit 
-             * để hiển thị thông tin chi tiết về người dùng hoặc để cho phép người dùng chỉnh sửa thông tin. */
+                /**dataUserEdit chứa dữ liệu về người dùng mà bạn muốn chỉnh sửa trong modal. Modal có thể sử dụng dataUserEdit 
+                 * để hiển thị thông tin chi tiết về người dùng hoặc để cho phép người dùng chỉnh sửa thông tin. */
+                handleEditUserFromModal={handleEditUserFromModal}
             />
             <ReactPaginate
                 nextLabel={

@@ -12,7 +12,14 @@ const fetchAllUser = (page) => {
 //Api để thêm dữ liệu người dùng
 const postCreateUser = (name, job) => {
     return (
-        axios.post("/api/users", { name, job })
+        axios.post("/api/users/", { name, job })
     )
 }
-export { fetchAllUser, postCreateUser };
+
+//Api để cập nhật người dùng
+const putUpdateUser = (name, job) => {
+    return (
+        axios.put("/api/users/", { name, job })
+    )
+}
+export { fetchAllUser, postCreateUser, putUpdateUser };
