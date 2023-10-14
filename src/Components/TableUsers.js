@@ -11,6 +11,9 @@ import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew';
 //Modal chỉnh sửa người dùng
 import ModalEditUser from './ModalEditUser';
+//Modal xóa người dùng
+import ModalConfirm from './ModalConfirm';
+
 //Lodash
 import { cloneDeep } from 'lodash';
 
@@ -31,6 +34,13 @@ const TableUsers = (props) => {
     /**useState({}) khởi tạo biến trạng thái dataUserEdit với giá trị ban đầu là một đối tượng 
      * rỗng {}. dataUserEdit sẽ chứa dữ liệu trạng thái và có thể được cập nhật sau này bằng cách sử 
      * dụng setDataUserEdit. */
+    const [isShowModalDelete, setIsShowModalDelete] = useState(false);
+    /**Ban đầu, giá trị của isShowModalDelete được thiết lập thành false, tức là modal xóa sẽ bị ẩn khi ứng dụng được khởi 
+     * chạy. Khi bạn gọi setIsShowModalDelete(true), modal sẽ được hiển thị (nếu đã được thiết lập để sử dụng biến 
+     * isShowModalDelete để quyết định hiển thị).*/
+    const [dataUserDelete, setDataUserDelete] = useState({});
+    /**lưu trữ thông tin người dùng cần xóa. Sau đó, bạn có thể sử dụng dữ liệu này để thực hiện xóa người dùng hoặc thực 
+     * hiện các tác vụ khác liên quan đến người dùng. */
 
     //Chức năng đóng Modal
     const handleClose = () => {
@@ -40,6 +50,9 @@ const TableUsers = (props) => {
         setIsShowModalEdit(false);
         /**Khi được gọi, hàm này sẽ đặt giá trị của biến setIsShowModalEdit thành false, dẫn đến việc 
          * ẩn modal. */
+        setIsShowModalDelete(false);
+        /**Đặt giá trị của biến trạng thái isShowModalDelete thành false, dẫn đến việc ẩn modal "Xóa" (nếu modal "Xóa" đã 
+         * được thiết lập để sử dụng biến isShowModalDelete để quyết định hiển thị).*/
     }
 
     //tạo chức năng cập nhật dữ liệu khi thêm thành công
@@ -117,6 +130,14 @@ const TableUsers = (props) => {
          * dùng trên giao diện người dùng, vì modal này dựa vào giá trị của isShowModalEdit để quyết định xem có hiển thị hay 
          * không. */
     }
+
+    //Hiển thị modal xóa
+    const handleDeleteUser = (user) => {
+        setIsShowModalDelete(true);
+        setDataUserDelete(user);
+        /**Gọi hàm setDataUserDelete để thiết lập giá trị của biến trạng thái dataUserDelete bằng thông tin người dùng được 
+         * truyền vào hàm handleDeleteUser. Thông tin người dùng này sẽ được sử dụng sau đó khi bạn thực hiện tác vụ xóa. */
+    }
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
@@ -150,7 +171,7 @@ const TableUsers = (props) => {
                                         <button onClick={() => handleEditUser(item)} className='btn btn-success mx-3 fw-bold'>
                                             Sửa
                                         </button>
-                                        <button className='btn btn-danger fw-bold'>Xóa</button>
+                                        <button className='btn btn-danger fw-bold' onClick={() => handleDeleteUser(item)}>Xóa</button>
                                     </td>
                                 </tr>
                             )
@@ -184,6 +205,12 @@ const TableUsers = (props) => {
                 /**dataUserEdit chứa dữ liệu về người dùng mà bạn muốn chỉnh sửa trong modal. Modal có thể sử dụng dataUserEdit 
                  * để hiển thị thông tin chi tiết về người dùng hoặc để cho phép người dùng chỉnh sửa thông tin. */
                 handleEditUserFromModal={handleEditUserFromModal}
+            />
+            {/* Modal xóa User */}
+            <ModalConfirm
+                show={isShowModalDelete}
+                handleClose={handleClose}
+                dataUserDelete={dataUserDelete}
             />
             <ReactPaginate
                 nextLabel={

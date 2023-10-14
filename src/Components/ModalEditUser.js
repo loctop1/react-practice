@@ -52,7 +52,7 @@ const ModalEditUser = (props) => {
     console.log('>>> check prop Edit: ', dataUserEdit);
     return (
         <>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Chỉnh sửa người dùng</Modal.Title>
                 </Modal.Header>
