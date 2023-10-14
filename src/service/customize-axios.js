@@ -13,9 +13,10 @@ instance.interceptors.response.use(function (response) {
      * bởi mã gọi API.
      * function (response) Hàm này được gọi khi phản hồi (response) từ API có mã trạng thái HTTP nằm 
      * trong khoảng từ 2xx (200-299).*/
-    return response.data;
-    /**trả về dữ liệu của phản hồi (return response.data;), có nghĩa là nó sẽ giữ lại dữ liệu phản 
-     * hồi và chuyển nó tiếp cho mã gọi API sử dụng Axios. */
+    return response.data ? response.data : { statusCode: response.status };
+    /**Nếu phản hồi có dữ liệu (response.data không phải là null hoặc undefined), thì dữ liệu phản hồi sẽ được trả về. Nếu 
+     * phản hồi không có dữ liệu, một đối tượng mới được tạo với thuộc tính statusCode để thể hiện mã trạng thái HTTP của 
+     * phản hồi. Điều này cho phép mã gọi API sử dụng Axios tiếp tục xử lý phản hồi, dù có dữ liệu hoặc không. */
 }, function (error) {
     /**Hàm này được gọi khi có lỗi trong quá trình gửi yêu cầu hoặc phản hồi từ API có mã trạng thái 
      * nằm ngoài khoảng từ 2xx. */

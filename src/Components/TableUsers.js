@@ -138,6 +138,26 @@ const TableUsers = (props) => {
         /**Gọi hàm setDataUserDelete để thiết lập giá trị của biến trạng thái dataUserDelete bằng thông tin người dùng được 
          * truyền vào hàm handleDeleteUser. Thông tin người dùng này sẽ được sử dụng sau đó khi bạn thực hiện tác vụ xóa. */
     }
+
+    //Chức năng cập nhật lại data khi xóa người dùng thành công
+    const handleDeleteUserFromModal = (user) => {
+        const _ = require('lodash');
+        /**Đoạn mã này import thư viện Lodash và gán nó cho biến _. Lodash là một thư viện JavaScript phổ biến dùng để thao tác 
+         * và xử lý dữ liệu. */
+        let cloneListUsers = _.cloneDeep(listUsers);
+        /**Dòng này tạo một bản sao sâu của danh sách listUsers sử dụng hàm _.cloneDeep từ thư viện Lodash. Bản sao sâu đảm bảo 
+         * rằng các thay đổi không ảnh hưởng đến danh sách gốc. */
+        cloneListUsers = cloneListUsers.filter(item => item.id !== user.id);
+        /**cloneListUsers: Đây là danh sách ban đầu được sao chép sâu bằng cách sử dụng _.cloneDeep để đảm bảo không 
+         * ảnh hưởng đến danh sách gốc.
+         * .filter(item => item.id !== user.id):Nó tạo một bản sao mới của danh sách chứa tất cả các phần tử của danh sách 
+         * ban đầu, trừ những phần tử mà có id trùng với user.id. Điều này sẽ loại bỏ người dùng đã bị xóa khỏi danh sách.
+         * Kết quả của .filter() được gán lại cho biến cloneListUsers, và bằng cách này, danh sách cloneListUsers được cập 
+         * nhật với các người dùng còn lại sau khi xóa người dùng có id trùng với user.id. */
+        setListUsers(cloneListUsers);
+        /**Dòng này sử dụng setListUsers (giả định rằng đây là hàm dùng để cập nhật danh sách người dùng) để cập nhật danh sách 
+         * listUsers thành bản sao đã được chỉnh sửa cloneListUsers. */
+    }
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
@@ -211,6 +231,7 @@ const TableUsers = (props) => {
                 show={isShowModalDelete}
                 handleClose={handleClose}
                 dataUserDelete={dataUserDelete}
+                handleDeleteUserFromModal={handleDeleteUserFromModal}
             />
             <ReactPaginate
                 nextLabel={

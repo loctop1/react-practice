@@ -1,13 +1,31 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+//Modal xóa User
+import { deleteUser } from '../service/UserService';
+import { toast } from 'react-toastify';
 
 const ModalConfirm = (props) => {
-    const { show, handleClose, dataUserDelete } = props;
+    const { show, handleClose, dataUserDelete, handleDeleteUserFromModal } = props;
     /**Giải nén props để lấy giá trị show và handleClose */
 
     //Chức năng xóa User
-    const confirmDelete = () => {
-
+    const confirmDelete = async () => {
+        let res = await deleteUser(dataUserDelete.id);
+        /**Gọi hàm deleteUser (trước đó bạn đã cung cấp) để xóa người dùng với id từ biến dataUserDelete. Kết quả của hàm \
+         * này được lưu trong biến res. */
+        if (res && +res.statusCode === 204) {
+            /**Kiểm tra nếu kết quả (res) tồn tại và mã trạng thái HTTP (statusCode) của phản hồi là 204, thể hiện rằng xóa 
+             * thành công.
+             * +res.statusCode: Trong đó, res.statusCode là một thuộc tính trong đối tượng phản hồi từ yêu cầu API. Toán 
+             * tử + được sử dụng để chuyển đổi giá trị này sang kiểu số. Mục tiêu là kiểm tra xem mã trạng thái HTTP của 
+             * phản hồi có phải là 204 hay không. */
+            toast.success(`Đã xóa người dùng ${dataUserDelete.email} thành công!`);
+            handleClose()
+            handleDeleteUserFromModal(dataUserDelete)
+            /**Gọi hàm handleDeleteUserFromModal để thực hiện xóa người dùng khỏi modal hoặc cửa sổ hiện tại. */
+        } else {
+            toast.error(`Lỗi!Không thể xóa người dùng ${dataUserDelete.email}!`);
+        }
     }
     return (
         <>

@@ -22,4 +22,12 @@ const putUpdateUser = (name, job) => {
         axios.put("/api/users/", { name, job })
     )
 }
-export { fetchAllUser, postCreateUser, putUpdateUser };
+
+//Gọi Api để xóa người dùng
+const deleteUser = (id) => {
+    return axios.delete(`/api/users/${id}`)
+    /**axios.delete(): Đây là một phương thức của thư viện Axios để thực hiện yêu cầu HTTP DELETE đến một tài nguyên. Đường 
+     * dẫn của tài nguyên cần xóa được xây dựng bằng cách sử dụng biến id để đặt vào URL. Sau khi yêu cầu hoàn thành, nó trả 
+     * về một Promise. */
+}
+export { fetchAllUser, postCreateUser, putUpdateUser, deleteUser };
