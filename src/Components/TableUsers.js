@@ -13,6 +13,7 @@ import ModalAddNew from './ModalAddNew';
 import ModalEditUser from './ModalEditUser';
 //Modal xóa người dùng
 import ModalConfirm from './ModalConfirm';
+import './TableUser.scss'
 
 //Lodash
 import { cloneDeep } from 'lodash';
@@ -20,27 +21,46 @@ import { cloneDeep } from 'lodash';
 const TableUsers = (props) => {
     const [listUsers, setListUsers] = useState([]);
     /**Khai báo một state "listUsers" và hàm "setListUsers" để lưu trữ danh sách người dùng. */
+
     const [totalUsers, setTotalUsers] = useState(0);
     /**Khai báo một state "totalUsers" và hàm "setTotalUsers" để lưu trữ tổng số người dùng*/
+
     const [totalPages, setTotalPages] = useState(0);
     /**Khai báo một state "totalUsers" và hàm "setTotalUsers" để lưu trữ tổng số trang*/
+
     const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
     /**Khai báo biến state isShowModalAddNew và hàm setIsShowModalAddNew để quản lý trạng thái hiển thị 
      * modal, ban đầu được đặt là false để ẩn modal. */
+
     const [isShowModalEdit, setIsShowModalEdit] = useState(false);
     /**Khai báo biến state isShowModalEdit và hàm setIsShowModalEdit để quản lý trạng thái hiển thị 
     * modal, ban đầu được đặt là false để ẩn modal. */
+
     const [dataUserEdit, setDataUserEdit] = useState({});
     /**useState({}) khởi tạo biến trạng thái dataUserEdit với giá trị ban đầu là một đối tượng 
      * rỗng {}. dataUserEdit sẽ chứa dữ liệu trạng thái và có thể được cập nhật sau này bằng cách sử 
      * dụng setDataUserEdit. */
+
     const [isShowModalDelete, setIsShowModalDelete] = useState(false);
     /**Ban đầu, giá trị của isShowModalDelete được thiết lập thành false, tức là modal xóa sẽ bị ẩn khi ứng dụng được khởi 
      * chạy. Khi bạn gọi setIsShowModalDelete(true), modal sẽ được hiển thị (nếu đã được thiết lập để sử dụng biến 
      * isShowModalDelete để quyết định hiển thị).*/
+
     const [dataUserDelete, setDataUserDelete] = useState({});
     /**lưu trữ thông tin người dùng cần xóa. Sau đó, bạn có thể sử dụng dữ liệu này để thực hiện xóa người dùng hoặc thực 
      * hiện các tác vụ khác liên quan đến người dùng. */
+
+    const [sortBy, setSortBy] = useState("asc");
+    /**sortBy là một biến trạng thái (state) đại diện cho thứ tự sắp xếp hiện tại. Nó được khởi tạo với giá trị chuỗi "asc", 
+     * thường thể hiện sắp xếp tăng dần.
+     * setSortBy là một hàm cho phép bạn cập nhật trạng thái của sortBy. Khi bạn gọi setSortBy(newValue), nó thay đổi giá 
+     * trị của sortBy thành giá trị mới (newValue). */
+
+    const [sortField, setSortField] = useState("id");
+    /**sortField là một biến trạng thái khác đại diện cho trường hiện tại mà dữ liệu đang được sắp xếp theo. Nó được khởi 
+     * tạo với giá trị chuỗi "id", cho biết ban đầu dữ liệu được sắp xếp theo trường "id".
+     * setSortField là một hàm cho phép bạn cập nhật trạng thái của sortField. Khi bạn gọi setSortField(newField), nó thay 
+     * đổi giá trị của sortField thành tên trường mới (newField). */
 
     //Chức năng đóng Modal
     const handleClose = () => {
@@ -158,6 +178,25 @@ const TableUsers = (props) => {
         /**Dòng này sử dụng setListUsers (giả định rằng đây là hàm dùng để cập nhật danh sách người dùng) để cập nhật danh sách 
          * listUsers thành bản sao đã được chỉnh sửa cloneListUsers. */
     }
+
+    //Chức năng sắp xếp thứ tự
+    const handleSort = (sortBy, sortField) => {
+        setSortBy("sortBy")
+        setSortField("sortField")
+        //Đây là hai dòng gán giá trị cho các biến trạng thái sortBy và sortField ở dưới thẻ i
+        const _ = require('lodash');
+        /**Đoạn mã này import thư viện Lodash và gán nó cho biến _. Lodash là một thư viện JavaScript phổ biến dùng để thao tác 
+         * và xử lý dữ liệu. */
+        let cloneListUsers = _.cloneDeep(listUsers);
+        /**Dòng này tạo một bản sao sâu của danh sách listUsers sử dụng hàm _.cloneDeep từ thư viện Lodash. Bản sao sâu đảm bảo 
+         * rằng các thay đổi không ảnh hưởng đến danh sách gốc. */
+        cloneListUsers = _.orderBy(cloneListUsers, [sortField], [sortBy]);
+        /**Dòng này sử dụng hàm _.orderBy từ Lodash để sắp xếp bản sao của danh sách người dùng cloneListUsers dựa trên 
+         * trường sortField và thứ tự sắp xếp sortBy. Kết quả của việc sắp xếp này ghi đè lên bản sao cloneListUsers. */
+        setListUsers(cloneListUsers);
+        /**Dòng này sử dụng setListUsers (giả định rằng đây là hàm dùng để cập nhật danh sách người dùng) để cập nhật danh sách 
+         * listUsers thành bản sao đã được chỉnh sửa cloneListUsers. */
+    }
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
@@ -171,9 +210,25 @@ const TableUsers = (props) => {
             <Table striped bordered hover responsive className='custom-table'>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th >
+                            <div className='sort-header'>
+                                <span>ID</span>
+                                <span>
+                                    <i onClick={() => handleSort("desc", "id")} className="fa-solid fa-arrow-down" style={{ color: 'black' }}></i>
+                                    <i onClick={() => handleSort("asc", "id")} className="fa-solid fa-arrow-up" style={{ color: 'black' }}></i>
+                                </span>
+                            </div>
+                        </th>
                         <th>Email</th>
-                        <th>Họ</th>
+                        <th>
+                            <div className='sort-header'>
+                                <span>Họ</span>
+                                <span>
+                                    <i onClick={() => handleSort("desc", "first_name")} className="fa-solid fa-arrow-down" style={{ color: 'black' }}></i>
+                                    <i onClick={() => handleSort("asc", "first_name")} className="fa-solid fa-arrow-up" style={{ color: 'black' }}></i>
+                                </span>
+                            </div>
+                        </th>
                         <th>Tên</th>
                         <th>Thao tác</th>
                     </tr>
@@ -198,9 +253,9 @@ const TableUsers = (props) => {
                         })
                     }
                 </tbody>
-            </Table>
+            </Table >
             {/* Modal thêm User */}
-            <ModalAddNew
+            < ModalAddNew
                 show={isShowModalAddNew}
                 /**truyền giá trị của biến isShowModalAddNew vào prop show của <ModalAddNew>. Điều này sẽ 
                  * quyết định xem modal có được hiển thị (nếu isShowModalAddNew là true) hoặc ẩn đi 
@@ -212,7 +267,7 @@ const TableUsers = (props) => {
                 handleUpdateTable={handleUpdateTable}
             />
             {/* Modal chỉnh sửa User */}
-            <ModalEditUser
+            < ModalEditUser
                 show={isShowModalEdit}
                 /**truyền giá trị của biến isShowModalEdit vào prop show của <ModalEditUser>. Điều này sẽ 
                  * quyết định xem modal có được hiển thị (nếu isShowModalEdit là true) hoặc ẩn đi 
@@ -227,7 +282,7 @@ const TableUsers = (props) => {
                 handleEditUserFromModal={handleEditUserFromModal}
             />
             {/* Modal xóa User */}
-            <ModalConfirm
+            < ModalConfirm
                 show={isShowModalDelete}
                 handleClose={handleClose}
                 dataUserDelete={dataUserDelete}
