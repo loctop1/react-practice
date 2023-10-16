@@ -16,6 +16,8 @@ import ModalConfirm from './ModalConfirm';
 import './TableUser.scss'
 
 //Lodash
+import _ from "lodash";
+import { debounce } from 'lodash';
 import { cloneDeep } from 'lodash';
 
 const TableUsers = (props) => {
@@ -62,6 +64,12 @@ const TableUsers = (props) => {
      * setSortField là một hàm cho phép bạn cập nhật trạng thái của sortField. Khi bạn gọi setSortField(newField), nó thay 
      * đổi giá trị của sortField thành tên trường mới (newField). */
 
+    const [keyword, setKeyword] = useState("");
+    /**Khai báo chức năng tìm kiếm từ khóa */
+
+    const [isLoading, setIsLoading] = useState(false);
+    //Chức năng loading khi chờ kết quả tìm kiếm
+
     //Chức năng đóng Modal
     const handleClose = () => {
         setIsShowModalAddNew(false);
@@ -89,9 +97,6 @@ const TableUsers = (props) => {
 
     //Chức năng chỉnh sửa người dùng
     const handleEditUserFromModal = (user) => {
-        const _ = require('lodash');
-        /**Đoạn mã này import thư viện Lodash và gán nó cho biến _. Lodash là một thư viện JavaScript phổ biến dùng để thao tác 
-         * và xử lý dữ liệu. */
         let cloneListUsers = _.cloneDeep(listUsers);
         /**Dòng này tạo một bản sao sâu của danh sách listUsers sử dụng hàm _.cloneDeep từ thư viện Lodash. Bản sao sâu đảm bảo 
          * rằng các thay đổi không ảnh hưởng đến danh sách gốc. */
@@ -161,9 +166,6 @@ const TableUsers = (props) => {
 
     //Chức năng cập nhật lại data khi xóa người dùng thành công
     const handleDeleteUserFromModal = (user) => {
-        const _ = require('lodash');
-        /**Đoạn mã này import thư viện Lodash và gán nó cho biến _. Lodash là một thư viện JavaScript phổ biến dùng để thao tác 
-         * và xử lý dữ liệu. */
         let cloneListUsers = _.cloneDeep(listUsers);
         /**Dòng này tạo một bản sao sâu của danh sách listUsers sử dụng hàm _.cloneDeep từ thư viện Lodash. Bản sao sâu đảm bảo 
          * rằng các thay đổi không ảnh hưởng đến danh sách gốc. */
@@ -184,9 +186,6 @@ const TableUsers = (props) => {
         setSortBy("sortBy")
         setSortField("sortField")
         //Đây là hai dòng gán giá trị cho các biến trạng thái sortBy và sortField ở dưới thẻ i
-        const _ = require('lodash');
-        /**Đoạn mã này import thư viện Lodash và gán nó cho biến _. Lodash là một thư viện JavaScript phổ biến dùng để thao tác 
-         * và xử lý dữ liệu. */
         let cloneListUsers = _.cloneDeep(listUsers);
         /**Dòng này tạo một bản sao sâu của danh sách listUsers sử dụng hàm _.cloneDeep từ thư viện Lodash. Bản sao sâu đảm bảo 
          * rằng các thay đổi không ảnh hưởng đến danh sách gốc. */
@@ -197,6 +196,35 @@ const TableUsers = (props) => {
         /**Dòng này sử dụng setListUsers (giả định rằng đây là hàm dùng để cập nhật danh sách người dùng) để cập nhật danh sách 
          * listUsers thành bản sao đã được chỉnh sửa cloneListUsers. */
     }
+
+    const handleSearch = debounce((event) => {
+        /**debounce được sử dụng để giới hạn tần suất gọi hàm tìm kiếm bằng cách chỉ cho phép gọi hàm này một lần sau khi 
+         * kết thúc một khoảng thời gian đã được thiết lập (500ms trong trường hợp này) sau mỗi lần người dùng nhập dữ liệu 
+         * vào ô tìm kiếm. */
+        let term = event.target.value; // Lấy giá trị từ ô tìm kiếm
+        setIsLoading(true); // Bắt đầu hiển thị loading
+        if (term) {
+            /**Nếu term (tức là ô tìm kiếm không trống) */
+            let cloneListUsers = _.cloneDeep(listUsers);
+            /**Dòng này tạo một bản sao sâu của danh sách listUsers sử dụng hàm _.cloneDeep từ thư viện Lodash. Bản sao sâu 
+             * đảm bảo rằng các thay đổi không ảnh hưởng đến danh sách gốc. */
+            cloneListUsers = cloneListUsers.filter((item) => item.email.includes(term));
+            /**item trong hàm filter là một biến lặp qua từng phần tử trong mảng cloneListUsers. Trong trường hợp này, item 
+             * là một đối tượng đại diện cho một người dùng trong danh sách.
+             * item.email.includes(term) kiểm tra xem chuỗi term (giá trị nhập trong ô tìm kiếm) có tồn tại trong chuỗi 
+             * item.email (địa chỉ email của người dùng) hay không. Nếu có, phần tử sẽ được bao gồm trong mảng kết quả; nếu 
+             * không, nó sẽ bị loại bỏ khỏi danh sách. */
+
+            // Trì hoãn việc kết thúc tìm kiếm trong 500ms
+            setTimeout(() => {
+                setListUsers(cloneListUsers);
+                setIsLoading(false); // Kết thúc hiển thị loading
+            }, 500);
+        } else {
+            getUsers(1);
+            setIsLoading(false); // Kết thúc hiển thị loading
+        }
+    }, 500);
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
@@ -206,6 +234,15 @@ const TableUsers = (props) => {
                 <button onClick={() => setIsShowModalAddNew(true)} className='btn btn-primary btn-lg float-end'>
                     Thêm người dùng
                 </button>
+            </div>
+            <div className='col-4 my-3'>
+                <input onChange={(event) => handleSearch(event)} className='form-control border-dark' placeholder='Tìm kiếm...' />
+                {isLoading &&
+                    <button class="btn btn-success" type="button">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        &nbsp; Đang tìm...
+                    </button>
+                }
             </div>
             <Table striped bordered hover responsive className='custom-table'>
                 <thead>
