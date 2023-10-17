@@ -14,11 +14,12 @@ import ModalEditUser from './ModalEditUser';
 //Modal xóa người dùng
 import ModalConfirm from './ModalConfirm';
 import './TableUser.scss'
-
 //Lodash
 import _ from "lodash";
 import { debounce } from 'lodash';
 import { cloneDeep } from 'lodash';
+//CSV
+import { CSVLink, CSVDownload } from 'react-csv';
 
 const TableUsers = (props) => {
     const [listUsers, setListUsers] = useState([]);
@@ -225,16 +226,37 @@ const TableUsers = (props) => {
             setIsLoading(false); // Kết thúc hiển thị loading
         }
     }, 500);
+
+    //Chức năng của CSV
+    const csvData = [
+        ["firstname", "lastname", "email"],
+        ["Ahmed", "Tomi", "ah@smthing.co.com"],
+        ["Raed", "Labes", "rl@smthing.co.com"],
+        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+    ]
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
                 <span>
                     <FontAwesomeIcon icon={faUser} style={{ color: 'black' }} size='sm' /> Danh sách người dùng
                 </span>
-                <button onClick={() => setIsShowModalAddNew(true)} className='btn btn-primary btn-lg float-end'>
-                    Thêm người dùng
-                </button>
-            </div>
+                <div className='gruop-btns'>
+                    <label htmlFor='test' className='btn btn-secondary fw-bold'>
+                        <i className="fa-solid fa-file-arrow-up fa-xl" style={{ color: 'white' }}></i> Chọn File
+                    </label>
+                    <input id='test' type='file' hidden />
+                    {/* React CSV */}
+                    <CSVLink
+                        filename={"users.csv"}
+                        className="btn btn-success fw-bold"
+                        data={csvData}>
+                        <i className="fa-solid fa-file-excel fa-xl" style={{ color: 'white' }}></i> Xuất File Excel
+                    </CSVLink>
+                    <button onClick={() => setIsShowModalAddNew(true)} className='btn btn-primary fw-bold'>
+                        <i className="fa-sharp fa-solid fa-circle-plus fa-xl" style={{ color: 'white' }}></i> Thêm người dùng
+                    </button>
+                </div>
+            </div >
             <div className='col-4 my-3'>
                 <input onChange={(event) => handleSearch(event)} className='form-control border-dark' placeholder='Tìm kiếm...' />
                 {isLoading &&

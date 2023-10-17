@@ -8,5 +8,18 @@
         font-size: 16px;
     }
 }
+.add-new{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .gruop-btns{
+        display: flex;
+        gap: 10px;
 
+        i{
+            padding: 0 5px;
+        }
+    }
+  }
   
