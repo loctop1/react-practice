@@ -71,6 +71,9 @@ const TableUsers = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     //Chức năng loading khi chờ kết quả tìm kiếm
 
+    const [dataExport, setDataExport] = useState([]);
+    //Khai báo chức năng lấy data CSV file
+
     //Chức năng đóng Modal
     const handleClose = () => {
         setIsShowModalAddNew(false);
@@ -227,13 +230,31 @@ const TableUsers = (props) => {
         }
     }, 500);
 
-    //Chức năng của CSV
-    const csvData = [
-        ["firstname", "lastname", "email"],
-        ["Ahmed", "Tomi", "ah@smthing.co.com"],
-        ["Raed", "Labes", "rl@smthing.co.com"],
-        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
-    ]
+    //Chức năng trích xuất dữ liệu cho file CSV
+    const getUsersExport = (event, done) => {
+        let result = [];
+        /**Khởi tạo một mảng rỗng để lưu trữ dữ liệu xuất */
+        if (listUsers && listUsers.length > 0) {
+            /**Kiểm tra xem biến listUsers đã được định nghĩa và có dữ liệu trong nó hay không */
+            result.push(["ID", "Email", "Họ", "Tên"]);
+            /**Thêm một hàng dữ liệu đầu tiên với tiêu đề cột */
+            listUsers.map((item, index) => {
+                /**Sử dụng hàm map để duyệt qua mảng listUsers và chuyển đổi từng phần tử thành một mảng arr */
+                let arr = [];
+                /**Khởi tạo một mảng arr để lưu trữ dữ liệu của mỗi người dùng */
+                arr[0] = item.id;
+                arr[1] = item.email;
+                arr[2] = item.first_name;
+                arr[3] = item.last_name;
+                result.push(arr);
+                /**hêm mảng arr vào mảng kết quả result */
+            })
+            setDataExport(result);
+            /**Gán mảng result chứa dữ liệu đã được chuẩn bị vào biến setDataExport */
+            done();
+            /**Gọi hàm done để báo hiệu rằng quá trình xử lý đã hoàn thành */
+        }
+    }
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
@@ -249,7 +270,13 @@ const TableUsers = (props) => {
                     <CSVLink
                         filename={"users.csv"}
                         className="btn btn-success fw-bold"
-                        data={csvData}>
+                        data={dataExport}
+                        /**Dữ liệu CSV sẽ được xuất, được truyền từ biến dataExport */
+                        asyncOnClick={true}
+                        /**Thiết lập để thực hiện xuất dữ liệu CSV bất đồng bộ (asynchronously) */
+                        onClick={getUsersExport}
+                    /**Gọi hàm getUsersExport khi liên kết được nhấn */
+                    >
                         <i className="fa-solid fa-file-excel fa-xl" style={{ color: 'white' }}></i> Xuất File Excel
                     </CSVLink>
                     <button onClick={() => setIsShowModalAddNew(true)} className='btn btn-primary fw-bold'>
