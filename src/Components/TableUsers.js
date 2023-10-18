@@ -20,6 +20,9 @@ import { debounce } from 'lodash';
 import { cloneDeep } from 'lodash';
 //CSV
 import { CSVLink, CSVDownload } from 'react-csv';
+//Papa Parse
+import Papa from "papaparse";
+import { toast } from 'react-toastify';
 
 const TableUsers = (props) => {
     const [listUsers, setListUsers] = useState([]);
@@ -255,6 +258,73 @@ const TableUsers = (props) => {
             /**Gọi hàm done để báo hiệu rằng quá trình xử lý đã hoàn thành */
         }
     }
+
+    //Tạo chức năng đọc các kiểu File
+    const handleImportCSV = (event) => {
+        if (event.target && event.target.files && event.target.files[0]) {
+            /**Kiểm tra xem sự kiện event có một target, các files và ít nhất một file được chọn hay không. */
+            let file = event.target.files[0];
+            /**Gán file đầu tiên (nếu có) từ danh sách các file đã chọn vào biến file. */
+            if (file.type !== "text/csv") {
+                toast.error("Lỗi! File bạn vừa nhập không đúng định dạng!");
+                return;
+                /**Kiểm tra xem file có đúng định dạng CSV (có kiểu MIME là "text/csv") hay không. Nếu không đúng, hiển thị 
+                 * thông báo lỗi. */
+            }
+            // Parse local CSV file
+            Papa.parse(file, {
+                /**Sử dụng thư viện PapaParse để phân tích file CSV. Thư viện này cung cấp một hàm Papa.parse để phân tích 
+                 * file CSV thành dữ liệu JSON. */
+                // header: true,
+                complete: function (results) {
+                    /**Định nghĩa một hàm callback để xử lý khi quá trình phân tích CSV hoàn thành. */
+                    let rawCSV = results.data;
+                    /**Gán dữ liệu phân tích từ file CSV vào biến rawCSV. */
+                    if (rawCSV.length > 0) {
+                        /**Kiểm tra xem có dữ liệu trong file CSV hay không. */
+                        if (rawCSV[0] && rawCSV[0].length === 4) {
+                            /**Kiểm tra xem hàng đầu tiên của CSV (header) có đúng 4 cột với các tên cột là "ID", "email", 
+                             * "first_name" và "last_name" hay không. */
+                            if (rawCSV[0][0] !== "ID" || rawCSV[0][1] !== "email" || rawCSV[0][2] !== "first_name" || rawCSV[0][3] !== "last_name") {
+                                /**Điều kiện này kiểm tra xem header của file CSV có chứa các trường "ID," "email," 
+                                 * "first_name," và "last_name" hay không. Nếu bất kỳ một trường nào không khớp, nó hiển thị 
+                                 * thông báo lỗi. */
+                                toast.error('Tải File header không hợp lệ!')
+                            } else {
+                                /**Nếu header của file CSV được xác nhận là hợp lệ, mã sau đó được thực hiện. */
+                                let result = [];
+                                /**Tạo một mảng trống result để lưu trữ dữ liệu người dùng sau khi phân tích file CSV. */
+                                rawCSV.map((item, index) => {
+                                    /**Bắt đầu duyệt qua từng dòng (khi index lớn hơn 0) của rawCSV bắt đầu từ dòng thứ hai, 
+                                     * bỏ qua dòng header. */
+                                    if (index > 0 && item.length === 4) {
+                                        /**Kiểm tra xem dòng này có đúng 4 trường dữ liệu hay không (có "ID," "email," 
+                                         * "first_name," và "last_name"). */
+                                        let obj = {};
+                                        /**Tạo một đối tượng JavaScript trống để lưu trữ thông tin người dùng từ dòng CSV 
+                                         * hiện tại. */
+                                        obj.id = item[0]
+                                        obj.email = item[1];
+                                        obj.first_name = item[2];
+                                        obj.last_name = item[3];
+                                        result.push(obj);
+                                        /**Thêm đối tượng obj vào mảng result. */
+                                    }
+                                })
+                                setListUsers(result);
+                                /**Cập nhật state setListUsers với mảng result, chứa danh sách người dùng từ file CSV. */
+                                console.log('>>> check result: ', result)
+                            }
+                        } else {
+                            toast.error('Tải File không hợp lệ!')
+                        }
+                    } else {
+                        toast.error("Lỗi! Không thể tải File")
+                    }
+                }
+            });
+        }
+    }
     return (
         <>
             <div className='my-3 fs-2 fw-bold add-new'>
@@ -265,7 +335,7 @@ const TableUsers = (props) => {
                     <label htmlFor='test' className='btn btn-secondary fw-bold'>
                         <i className="fa-solid fa-file-arrow-up fa-xl" style={{ color: 'white' }}></i> Chọn File
                     </label>
-                    <input id='test' type='file' hidden />
+                    <input onChange={(event) => handleImportCSV(event)} id='test' type='file' hidden />
                     {/* React CSV */}
                     <CSVLink
                         filename={"users.csv"}
