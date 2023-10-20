@@ -7,6 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ModalAddNew from './Components/ModalAddNew';
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import Home from './Components/Home';
+// React route
+import { Routes, Route, Link } from 'react-router-dom';
 
 function App() {
   return (
@@ -14,8 +17,10 @@ function App() {
       <div className='app-container'>
         <Header />
         <Container>
-
-          <TableUsers />
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/users' element={<TableUsers />} />
+          </Routes>
         </Container>
 
       </div>
