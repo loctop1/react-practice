@@ -74,5 +74,68 @@ code {
 }
 
 .app-container{
-  
+  .login-container{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+  }
+  .title{
+    text-align: center;
+    font-size: 23px;
+    font-weight: 700;
+    padding-top: 30px;
+  }
+
+  .text{
+    font-weight: 700;
+    padding-bottom: 3px;
+  }
+  input{
+    padding: 12px 7px;
+    outline: none;
+    margin-bottom: 7px;
+    border: 1px solid;
+    border-color:rgba(22, 24, 35, .12); 
+    background-color: rgba(22, 24, 35, .06);
+    border-radius: 3px;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  .input-2{
+    position: relative;
+
+    i{
+      cursor: pointer;
+      position: absolute;
+      top: 17px;
+      right: 10px;
+    }
+  }
+
+  .btn1{
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 3px;
+    outline: none;
+    border: none;
+    background-color: rgba(22, 24, 35, .06);
+    font-weight: 700;
+    &:hover{
+      background-color: rgba(22, 24, 35, .06);
+    }
+    &.active{
+      background-color: #fe2c55;
+      color: white;
+      font-weight: 700;
+    }
+  }
+  .btn1[disabled=disabled], .btn1:disabled{
+    cursor: not-allowed;
+  }
+  .back{
+    text-align: center;
+    margin-top: 30px;
+    cursor: pointer;
+  }
 }
