@@ -30,4 +30,9 @@ const deleteUser = (id) => {
      * dẫn của tài nguyên cần xóa được xây dựng bằng cách sử dụng biến id để đặt vào URL. Sau khi yêu cầu hoàn thành, nó trả 
      * về một Promise. */
 }
-export { fetchAllUser, postCreateUser, putUpdateUser, deleteUser };
+
+//Tạo API đăng nhập
+const loginApi = (email, password) => {
+    return axios.post("/api/login", { email, password })
+}
+export { fetchAllUser, postCreateUser, putUpdateUser, deleteUser, loginApi };
