@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 //API Login
 import { loginApi } from "../service/UserService";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     //Email
@@ -10,6 +11,24 @@ const Login = () => {
     const [password, setPassword] = useState("");
     //Hiển thị mật khẩu
     const [isShowPassword, setIsShowPassword] = useState(false);
+    //Ẩn hiện icon Loading
+    const [loadingAPI, setLoadingAPI] = useState(false);
+    //Chức năng chuyển trang khi đăng nhập thành công
+    const navigate = useNavigate();
+
+    //Chức năng ngăn người dùng khi đã đăng nhập thành công nên không thể đăng nhập tiếp
+    useEffect(() => {
+        let token = localStorage.getItem('token');
+        /**Trong dòng này, bạn đang cố gắng lấy giá trị được lưu trữ trong local storage với khóa ('token') để kiểm tra xem 
+         * người dùng đã đăng nhập hay chưa. Biến token sẽ chứa giá trị của token nếu nó tồn tại trong local storage, hoặc 
+         * null nếu không tồn tại. */
+        if (token) {
+            /**kiểm tra xem biến token có giá trị khác null hay không. Nếu token tồn tại, điều này có nghĩa người dùng đã 
+             * đăng nhập. */
+            navigate('/');
+            /**Nếu đã đăng nhập rồi thì điều hướng về trang chủ */
+        }
+    }, []);
 
     //Chức năng đăng nhập
     const handleLogin = async () => {
@@ -20,6 +39,7 @@ const Login = () => {
             /**Nếu một trong hai biến email hoặc password là false, thì hàm này sử dụng thư viện toast để hiển thị một 
              * thông báo lỗi với nội dung "Tên đăng nhập hoặc mật khẩu không chính xác!". */
         }
+        setLoadingAPI(true);
         let res = await loginApi(email, password);
         /**Hàm này gọi một hàm loginApi với tham số email và password. Sử dụng await để đợi cho đến khi hàm loginApi hoàn 
          * thành và trả về một promise đã được giải quyết (resolved). Kết quả của hàm loginApi được lưu vào biến res. */
@@ -28,7 +48,17 @@ const Login = () => {
             localStorage.setItem("token", res.token)
             /**Nếu biến res tồn tại và có thuộc tính token, thì hàm này lưu giá trị res.token vào local storage với key là 
              * "token". Điều này cho phép ứng dụng lưu thông tin đăng nhập để sử dụng trong các yêu cầu sau này. */
+            navigate('/');
+            /**Chuyển hướng về trang chủ khi đăng nhập thành công */
+            toast.success('Đăng nhập thành công!')
+        } else {
+            //error
+            if (res && res.status === 400) {
+                toast.error(res.data.error);
+                /**Nếu biến res tồn tại và mã trạng thái là 400, hiển thị thông báo lỗi từ res.data.error bằng thư viện "toast". */
+            }
         }
+        setLoadingAPI(false);
     }
     return (
         <>
@@ -59,7 +89,7 @@ const Login = () => {
                      * nó sẽ hiểu đúng lớp CSS bạn muốn áp dụng cho phần tử. */
                     onClick={() => handleLogin()}
                 >
-                    Đăng nhập
+                    {loadingAPI && <i class="fa-solid fa-spinner fa-spin-pulse"></i>} Đăng nhập
                 </button>
                 <div className="back">
                     <i className="fa-solid fa-chevron-left"></i> Quay lại

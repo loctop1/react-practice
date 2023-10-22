@@ -20,8 +20,25 @@ instance.interceptors.response.use(function (response) {
 }, function (error) {
     /**Hàm này được gọi khi có lỗi trong quá trình gửi yêu cầu hoặc phản hồi từ API có mã trạng thái 
      * nằm ngoài khoảng từ 2xx. */
-    return Promise.reject(error);
-    /**trả về một Promise đã bị từ chối với lỗi (return Promise.reject(error);), có nghĩa là nó sẽ 
-     * chuyển lỗi đến mã gọi API để xử lý. */
+    let res = {};
+    /**Khởi tạo một đối tượng 'res' để chứa thông tin về lỗi. */
+    if (error.response) {
+        /**Kiểm tra xem nếu có phản hồi từ server. */
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        res.data = error.response.data; // Lấy dữ liệu phản hồi từ phản hồi lỗi.
+        res.status = error.response.status; // Lấy mã trạng thái từ phản hồi lỗi.
+        res.headers = error.response.headers; //Lấy thông tin header từ phản hồi lỗi.
+    } else if (error.request) {
+        // Làm việc này nếu đã gửi yêu cầu nhưng không nhận được phản hồi.
+        // `error.request` là một instance của XMLHttpRequest trong trình duyệt hoặc http.ClientRequest trong Node.js.
+        console.log(error.request);
+        /**Log thông tin về yêu cầu gửi đi (đối tượng 'error.request'). */
+    } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+        /**Log thông báo lỗi thông qua thuộc tính 'message' của đối tượng lỗi 'error'. */
+    }
+    return res;
 });
 export default instance;
