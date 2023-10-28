@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 //API Login
 import { loginApi } from "../service/UserService";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 const Login = () => {
+    const { loginContext } = useContext(UserContext);
     //Email
     const [email, setEmail] = useState("");
     //Password
@@ -45,9 +47,7 @@ const Login = () => {
          * thành và trả về một promise đã được giải quyết (resolved). Kết quả của hàm loginApi được lưu vào biến res. */
         if (res && res.token) {
             /**Kiểm tra xem biến res có tồn tại và có thuộc tính token hay không. */
-            localStorage.setItem("token", res.token)
-            /**Nếu biến res tồn tại và có thuộc tính token, thì hàm này lưu giá trị res.token vào local storage với key là 
-             * "token". Điều này cho phép ứng dụng lưu thông tin đăng nhập để sử dụng trong các yêu cầu sau này. */
+            loginContext(email, res.token);
             navigate('/');
             /**Chuyển hướng về trang chủ khi đăng nhập thành công */
             toast.success('Đăng nhập thành công!')
@@ -60,11 +60,15 @@ const Login = () => {
         }
         setLoadingAPI(false);
     }
+    // Chức năng quay lại trang chủ
+    const handleGoBack = () => {
+        navigate("/")
+    }
     return (
         <>
             <div className="login-container col-12 col-sm-4">
                 <div className="title">Đăng nhập</div>
-                <div className="text">Email hoặc TikTok ID</div>
+                <div className="text">Email hoặc TikTok ID "eve.holt@reqres.in"</div>
                 <input value={email} onChange={(event) => setEmail(event.target.value)} type="text" placeholder="Email hoặc Tiktok ID" />
                 <div className="input-2">
                     <input value={password}
@@ -84,7 +88,7 @@ const Login = () => {
                     /**Nếu cả email và password đều có giá trị đúng (truthy), thì disabled sẽ được đặt thành false, cho phép 
                      * nút có thể nhấp được. Nếu ít nhất một trong số họ không có giá trị, disabled sẽ được đặt thành true, 
                      * ngăn chặn người dùng nhấp vào nút. */
-                    className={"btn1" + (email && password ? " active" : "")}
+                    className={"btn1 " + (email && password ? "active" : "")}
                     /**Khoảng trống giữa các lớp " active" là cách tiêu chuẩn để thêm nhiều lớp vào một phần tử. Bằng cách này, 
                      * nó sẽ hiểu đúng lớp CSS bạn muốn áp dụng cho phần tử. */
                     onClick={() => handleLogin()}
@@ -92,7 +96,8 @@ const Login = () => {
                     {loadingAPI && <i class="fa-solid fa-spinner fa-spin-pulse"></i>} Đăng nhập
                 </button>
                 <div className="back">
-                    <i className="fa-solid fa-chevron-left"></i> Quay lại
+                    <i class="fa-solid fa-arrow-left fa-xl" style={{ color: 'black' }}></i>
+                    <span className="fw-bold fs-5" onClick={() => handleGoBack()}> Quay lại</span>
                 </div>
             </div >
         </>
