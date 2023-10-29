@@ -31,3 +31,6 @@ const PrivateRoute = (props) => {
     )
 }
 export default PrivateRoute;
+/**react-error-overlay là một thư viện JavaScript được sử dụng trong các ứng dụng React để cải thiện trải nghiệm gỡ lỗi. 
+ * Thư viện này giúp hiển thị thông báo lỗi và stack trace (ngăn xếp cuộc gọi) khi có lỗi xảy ra trong ứng dụng React của 
+ * bạn, giúp bạn dễ dàng xác định và sửa lỗi trong quá trình phát triển. */
