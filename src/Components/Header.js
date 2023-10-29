@@ -47,11 +47,11 @@ const Header = (props) => {
                             /**window.location.pathname === '/' Nếu đường dẫn hiện tại của trình duyệt là '/', thì luôn hiện 
                              * thông tin */
                             <>
-                                <Nav className="me-auto">
+                                <Nav className="me-auto fs-5 fw-bold">
                                     <NavLink to="/" className="nav-link text-decoration-none text-dark">Trang chủ</NavLink>
                                     <NavLink to="/users" className="nav-link text-decoration-none text-dark">Danh sách người dùng</NavLink>
                                 </Nav>
-                                <Nav>
+                                <Nav className='fs-5'>
                                     {user && user.email && <span className='nav-link'>Xin chào <b>{user.email}</b></span>}
                                     <NavDropdown title="Tài khoản" id="basic-nav-dropdown">
                                         {user && user.auth === true
