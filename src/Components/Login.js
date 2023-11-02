@@ -42,9 +42,12 @@ const Login = () => {
              * thông báo lỗi với nội dung "Tên đăng nhập hoặc mật khẩu không chính xác!". */
         }
         setLoadingAPI(true);
-        let res = await loginApi(email, password);
+        let res = await loginApi(email.trim(), password);
         /**Hàm này gọi một hàm loginApi với tham số email và password. Sử dụng await để đợi cho đến khi hàm loginApi hoàn 
-         * thành và trả về một promise đã được giải quyết (resolved). Kết quả của hàm loginApi được lưu vào biến res. */
+         * thành và trả về một promise đã được giải quyết (resolved). Kết quả của hàm loginApi được lưu vào biến res.
+         * Phương thức trim() trong ngôn ngữ lập trình thường được sử dụng để loại bỏ các ký tự khoảng trắng (hoặc 
+         * whitespace) từ đầu và cuối một chuỗi (string). Điều này rất hữu ích khi bạn muốn xử lý dữ liệu người dùng nhập 
+         * vào hoặc khi bạn cần làm sạch chuỗi đầu vào trước khi thực hiện các thao tác xử lý khác. */
         if (res && res.token) {
             /**Kiểm tra xem biến res có tồn tại và có thuộc tính token hay không. */
             loginContext(email, res.token);
@@ -64,6 +67,13 @@ const Login = () => {
     const handleGoBack = () => {
         navigate("/")
     }
+
+    //Chức năng enter khi đăng nhập
+    const handlePressEnter = (event) => {
+        if (event && event.key === 'Enter') {
+            handleLogin();
+        }
+    }
     return (
         <>
             <div className="login-container col-12 col-sm-4">
@@ -75,6 +85,9 @@ const Login = () => {
                         onChange={(event) => setPassword(event.target.value)}
                         type={isShowPassword === true ? "text" : "password"}
                         placeholder="Mật khẩu"
+                        onKeyDown={(event) => handlePressEnter(event)}
+                    /**Nó cho phép bạn xác định một hàm xử lý sự kiện sẽ được gọi khi người dùng nhấn một phím bất kỳ 
+                     * trên bàn phím. */
                     />
                     <i onClick={() => setIsShowPassword(!isShowPassword)}
                         /**khi phần tử <i> được nhấp, nó sẽ gọi hàm setIsShowPassword để đảo ngược (toggle) giá trị của 

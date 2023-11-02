@@ -327,11 +327,11 @@ const TableUsers = (props) => {
     }
     return (
         <>
-            <div className='my-3 fs-2 fw-bold add-new'>
-                <span>
+            <div className='my-3 fs-2 fw-bold add-new d-sm-flex'>
+                <span >
                     <FontAwesomeIcon icon={faUser} style={{ color: 'black' }} size='sm' /> Danh sách người dùng
                 </span>
-                <div className='gruop-btns'>
+                <div className='gruop-btns mt-sm-0 mt-2'>
                     <label htmlFor='test' className='btn btn-secondary fw-bold'>
                         <i className="fa-solid fa-file-arrow-up fa-xl" style={{ color: 'white' }}></i> Chọn File
                     </label>
@@ -354,7 +354,7 @@ const TableUsers = (props) => {
                     </button>
                 </div>
             </div >
-            <div className='col-4 my-3'>
+            <div className='col-12 col-sm-4 my-3'>
                 <input onChange={(event) => handleSearch(event)} className='form-control border-dark' placeholder='Tìm kiếm...' />
                 {isLoading &&
                     <button class="btn btn-success" type="button">
@@ -363,53 +363,56 @@ const TableUsers = (props) => {
                     </button>
                 }
             </div>
-            <Table striped bordered hover responsive className='custom-table'>
-                <thead>
-                    <tr>
-                        <th >
-                            <div className='sort-header'>
-                                <span>ID</span>
-                                <span>
-                                    <i onClick={() => handleSort("desc", "id")} className="fa-solid fa-arrow-down" style={{ color: 'black' }}></i>
-                                    <i onClick={() => handleSort("asc", "id")} className="fa-solid fa-arrow-up" style={{ color: 'black' }}></i>
-                                </span>
-                            </div>
-                        </th>
-                        <th>Email</th>
-                        <th>
-                            <div className='sort-header'>
-                                <span>Họ</span>
-                                <span>
-                                    <i onClick={() => handleSort("desc", "first_name")} className="fa-solid fa-arrow-down" style={{ color: 'black' }}></i>
-                                    <i onClick={() => handleSort("asc", "first_name")} className="fa-solid fa-arrow-up" style={{ color: 'black' }}></i>
-                                </span>
-                            </div>
-                        </th>
-                        <th>Tên</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {listUsers && listUsers.length > 0 &&
-                        listUsers.map((item, index) => {
-                            return (
-                                <tr key={`users-${index}`}>
-                                    <td>{item.id}</td>
-                                    <td>{item.email}</td>
-                                    <td>{item.first_name}</td>
-                                    <td>{item.last_name}</td>
-                                    <td>
-                                        <button onClick={() => handleEditUser(item)} className='btn btn-success mx-3 fw-bold'>
-                                            Sửa
-                                        </button>
-                                        <button className='btn btn-danger fw-bold' onClick={() => handleDeleteUser(item)}>Xóa</button>
-                                    </td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </Table >
+            <div className='customize-table'>
+                <Table striped bordered hover responsive>
+                    <thead>
+                        <tr>
+                            <th >
+                                <div className='sort-header'>
+                                    <span>ID</span>
+                                    <span>
+                                        <i onClick={() => handleSort("desc", "id")} className="fa-solid fa-arrow-down" style={{ color: 'black' }}></i>
+                                        <i onClick={() => handleSort("asc", "id")} className="fa-solid fa-arrow-up" style={{ color: 'black' }}></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th>Email</th>
+                            <th>
+                                <div className='sort-header'>
+                                    <span>Họ</span>
+                                    <span>
+                                        <i onClick={() => handleSort("desc", "first_name")} className="fa-solid fa-arrow-down" style={{ color: 'black' }}></i>
+                                        <i onClick={() => handleSort("asc", "first_name")} className="fa-solid fa-arrow-up" style={{ color: 'black' }}></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th>Tên</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {listUsers && listUsers.length > 0 &&
+                            listUsers.map((item, index) => {
+                                return (
+                                    <tr key={`users-${index}`}>
+                                        <td>{item.id}</td>
+                                        <td>{item.email}</td>
+                                        <td>{item.first_name}</td>
+                                        <td>{item.last_name}</td>
+                                        <td>
+                                            <button onClick={() => handleEditUser(item)} className='btn btn-success mx-3 fw-bold'>
+                                                Sửa
+                                            </button>
+                                            <button className='btn btn-danger fw-bold' onClick={() => handleDeleteUser(item)}>Xóa</button>
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        }
+                    </tbody>
+                </Table >
+            </div>
+
             {/* Modal thêm User */}
             < ModalAddNew
                 show={isShowModalAddNew}
