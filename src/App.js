@@ -12,8 +12,17 @@ import { UserContext } from './context/UserContext';
 import { useEffect } from 'react';
 // Route
 import AppRoutes from './routes/AppRoutes';
+import { useSelector } from 'react-redux';
 
 function App() {
+  const dataUserRedux = useSelector(state => state.user.account);
+  /**useSelector là một hook được cung cấp bởi thư viện Redux Toolkit hoặc thư viện React-Redux. Hook này được sử dụng trong 
+   * các thành phần React để chọn dữ liệu từ trạng thái Redux.
+   * state là đối số đầu tiên của hàm callback truyền vào useSelector. Đối số này là trạng thái Redux tổng hợp (root state) 
+   * hoặc một phần của trạng thái mà bạn muốn truy cập.
+   * state.user.account truy cập dữ liệu từ trạng thái Redux thông qua state. Cụ thể, nó truy cập trường account trong đối 
+   * tượng user trong trạng thái Redux. */
+
   const { user, loginContext } = useContext(UserContext);
   /**UserContext là một biến hoặc đối tượng mà bạn đã tạo bằng React.createContext() để chia sẻ dữ liệu trong toàn bộ ứng 
    * dụng của bạn.
