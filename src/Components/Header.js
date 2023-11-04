@@ -7,31 +7,36 @@ import { useLocation, NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 //useContext
 import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLogoutRedux } from '../redux/actions/userAction';
 
 const Header = (props) => {
-    const { logout, user } = useContext(UserContext);
-    /**UserContext là một biến hoặc đối tượng mà bạn đã tạo bằng React.createContext() để chia sẻ dữ liệu trong toàn bộ ứng 
-     * dụng của bạn.
-     * Sau khi bạn đã truy cập ngữ cảnh UserContext, bạn đang trích xuất một phương thức hoặc hàm có tên logout từ ngữ cảnh 
-     * đó. Điều này giả sử rằng UserContext cung cấp một phương thức logout để thực hiện việc đăng xuất người dùng khi cần. */
-    const [hideHeader, setHideHeader] = useState(false);
-    // useEffect(() => {
-    //     if (window.location.pathname === '/login') {
-    //         setHideHeader(true);
-    //     }
-    // }, []);
-
     //Chức năng đăng xuất
     const navigate = useNavigate();
+    const user = useSelector(state => state.user.account);
+    /**Điều này có nghĩa rằng bạn đang truy cập thông tin tài khoản của người dùng từ Redux store và lưu trữ nó trong biến 
+     * user để sử dụng trong giao diện người dùng của bạn. */
+    const dispatch = useDispatch();
+    //Đăng xuất
     const handleLogout = () => {
-        logout();
-        navigate('/');
-        /**Chuyển hướng về trang chủ */
-        toast.success('Đăng xuất thành công!');
+        dispatch(handleLogoutRedux());
     }
+    /**Hàm handleLogout thực hiện việc gọi một hành động Redux thông qua hàm handleLogoutRedux() và gửi nó đến Redux store 
+     * thông qua dispatch. */
+
+    // Chức năng quay lại trang chủ
+    useEffect(() => {
+        if (user && user.auth === false && window.location.pathname !== '/login') {
+            /**window.location.pathname !== '/login' đang kiểm tra xem nếu địa chỉ URL của trang hiện tại không phải là 
+             * "/login" thì điều kiện này sẽ trả về true, ngược lại sẽ trả về false. Điều này đảm bảo rằng mã trong 
+             * useEffect chỉ sẽ thực hiện khi người dùng không ở trên trang /login. */
+            navigate('/');
+            /**Chuyển hướng về trang chủ */
+        }
+        /**Nếu người dùng đăng nhập thành công thì sẽ quay về trang chủ */
+    }, [user])
     return (
         <>
             <Navbar expand="lg" className="bg-body-tertiary sticky-top">

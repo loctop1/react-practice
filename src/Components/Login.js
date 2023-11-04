@@ -1,12 +1,18 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 //API Login
-import { loginApi } from "../service/UserService";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+
+//Redux
+import { handleLoginRedux } from "../redux/actions/userAction";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
-    const { loginContext } = useContext(UserContext);
+    const dispatch = useDispatch();
+    /**useDispatch() thường được sử dụng trong các ứng dụng React khi bạn muốn gửi các hành động (actions) đến Redux store 
+     * hoặc trạng thái (state) quản lý bởi Redux. dispatch là một hàm có sẵn từ Redux, và bạn có thể gọi nó để gửi các hành 
+     * động đến Redux store. */
+
     //Email
     const [email, setEmail] = useState("");
     //Password
@@ -14,7 +20,14 @@ const Login = () => {
     //Hiển thị mật khẩu
     const [isShowPassword, setIsShowPassword] = useState(false);
     //Ẩn hiện icon Loading
-    const [loadingAPI, setLoadingAPI] = useState(false);
+    const isLoading = useSelector(state => state.user.isLoading);
+    /**useSelector là một hook được cung cấp bởi Redux Toolkit hoặc thư viện Redux, cho phép bạn trích xuất dữ liệu từ Redux 
+     * store một cách dễ dàng. Trong trường hợp của bạn, useSelector được sử dụng để truy cập giá trị isLoading từ trạng 
+     * thái của người dùng trong Redux store. */
+    const account = useSelector(state => state.user.account);
+    /**Trong trường hợp này, useSelector được sử dụng để trích xuất giá trị account từ trạng thái của người dùng trong 
+     * Redux store. */
+
     //Chức năng chuyển trang khi đăng nhập thành công
     const navigate = useNavigate();
 
@@ -41,27 +54,7 @@ const Login = () => {
             /**Nếu một trong hai biến email hoặc password là false, thì hàm này sử dụng thư viện toast để hiển thị một 
              * thông báo lỗi với nội dung "Tên đăng nhập hoặc mật khẩu không chính xác!". */
         }
-        setLoadingAPI(true);
-        let res = await loginApi(email.trim(), password);
-        /**Hàm này gọi một hàm loginApi với tham số email và password. Sử dụng await để đợi cho đến khi hàm loginApi hoàn 
-         * thành và trả về một promise đã được giải quyết (resolved). Kết quả của hàm loginApi được lưu vào biến res.
-         * Phương thức trim() trong ngôn ngữ lập trình thường được sử dụng để loại bỏ các ký tự khoảng trắng (hoặc 
-         * whitespace) từ đầu và cuối một chuỗi (string). Điều này rất hữu ích khi bạn muốn xử lý dữ liệu người dùng nhập 
-         * vào hoặc khi bạn cần làm sạch chuỗi đầu vào trước khi thực hiện các thao tác xử lý khác. */
-        if (res && res.token) {
-            /**Kiểm tra xem biến res có tồn tại và có thuộc tính token hay không. */
-            loginContext(email, res.token);
-            navigate('/');
-            /**Chuyển hướng về trang chủ khi đăng nhập thành công */
-            toast.success('Đăng nhập thành công!')
-        } else {
-            //error
-            if (res && res.status === 400) {
-                toast.error(res.data.error);
-                /**Nếu biến res tồn tại và mã trạng thái là 400, hiển thị thông báo lỗi từ res.data.error bằng thư viện "toast". */
-            }
-        }
-        setLoadingAPI(false);
+        dispatch(handleLoginRedux(email, password));
     }
     // Chức năng quay lại trang chủ
     const handleGoBack = () => {
@@ -74,6 +67,14 @@ const Login = () => {
             handleLogin();
         }
     }
+
+    // Chức năng quay lại trang chủ
+    useEffect(() => {
+        if (account && account.auth === true) {
+            navigate("/")
+        }
+        /**Nếu người dùng đăng nhập thành công thì sẽ quay về trang chủ */
+    }, [account])
     return (
         <>
             <div className="login-container col-12 col-sm-4">
@@ -106,7 +107,7 @@ const Login = () => {
                      * nó sẽ hiểu đúng lớp CSS bạn muốn áp dụng cho phần tử. */
                     onClick={() => handleLogin()}
                 >
-                    {loadingAPI && <i class="fa-solid fa-spinner fa-spin-pulse"></i>} Đăng nhập
+                    {isLoading && <i class="fa-solid fa-spinner fa-spin-pulse"></i>} Đăng nhập
                 </button>
                 <div className="back">
                     <i class="fa-solid fa-arrow-left fa-xl" style={{ color: 'black' }}></i>
