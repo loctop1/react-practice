@@ -15,7 +15,7 @@ const PrivateRoute = (props) => {
             <>
                 <Alert className='mt-3' variant="danger" dismissible>
                     <Alert.Heading>Thông báo!</Alert.Heading>
-                    <h4 className='alert alert-danger'>Xin lỗi! Bạn không là quản trị viên!</h4>
+                    <h4 className='alert alert-danger'>Xin lỗi! Bạn không phải là quản trị viên!</h4>
                 </Alert>
             </>
         )

@@ -15,6 +15,11 @@ import { handleLogoutRedux } from '../redux/actions/userAction';
 const Header = (props) => {
     //Chức năng đăng xuất
     const navigate = useNavigate();
+
+    // // Ví dụ về ErrorBoundary
+    // const a = null;
+    // console.log(a.abc);
+
     const user = useSelector(state => state.user.account);
     /**Điều này có nghĩa rằng bạn đang truy cập thông tin tài khoản của người dùng từ Redux store và lưu trữ nó trong biến 
      * user để sử dụng trong giao diện người dùng của bạn. */
